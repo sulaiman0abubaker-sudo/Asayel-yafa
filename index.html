@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>نظام إدارة مصنع أصايل يافا</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    font-family: Tahoma, Arial, sans-serif;
+
+}
+
+body {
+
+    margin: 0;
+
+    background: #f7f4f2;
+
+    color: #333;
+
+}
+
+button {
+
+    cursor: pointer;
+
+    border: none;
+
+    border-radius: 7px;
+
+    padding: 11px 18px;
+
+    background: #642f40;
+
+    color: white;
+
+    margin: 3px;
+
+}
+
+button:hover { background: #824357; }
+
+#loginPage {
+
+    height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #542b39;
+
+}
+
+.login-box {
+
+    background: white;
+
+    padding: 35px;
+
+    width: 350px;
+
+    max-width: 90%;
+
+    text-align: center;
+
+    border-radius: 15px;
+
+}
+
+.login-box h2 { color: #642f40; }
+
+input, select {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin: 8px 0;
+
+    border: 1px solid #ddd;
+
+    border-radius: 7px;
+
+}
+
+.login-box button { width: 100%; }
+
+#system { display: none; }
+
+header {
+
+    background: #542b39;
+
+    color: white;
+
+    padding: 20px 30px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+}
+
+header h2 {
+
+    color: #ffffff;
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+}
+
+.layout {
+
+    display: flex;
+
+    min-height: calc(100vh - 70px);
+
+}
+
+aside {
+
+    width: 235px;
+
+    background: white;
+
+    padding: 20px;
+
+    flex-shrink: 0;
+
+}
+
+aside h3 { color: #642f40; }
+
+aside button {
+
+    display: block;
+
+    width: 100%;
+
+    text-align: right;
+
+    background: transparent;
+
+    color: #444;
+
+    margin-bottom: 7px;
+
+}
+
+aside button:hover {
+
+    background: #f3e8ec;
+
+    color: #642f40;
+
+}
+
+main {
+
+    flex: 1;
+
+    padding: 30px;
+
+    min-width: 0;
+
+}
+
+.section { display: none; }
+
+.section.active { display: block; }
+
+.cards {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+
+    gap: 18px;
+
+    margin-top: 25px;
+
+}
+
+.card, .panel {
+
+    background: white;
+
+    padding: 22px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 2px 8px #00000008;
+
+}
+
+.card p {
+
+    font-size: 30px;
+
+    color: #642f40;
+
+    font-weight: bold;
+
+}
+
+.panel { margin-top: 20px; }
+
+.panel input, .panel select {
+
+    max-width: 450px;
+
+    display: block;
+
+}
+
+table {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    border-collapse: collapse;
+
+    background: white;
+
+}
+
+th, td {
+
+    padding: 13px;
+
+    border-bottom: 1px solid #eee;
+
+    text-align: right;
+
+}
+
+th {
+
+    background: #f3e8ec;
+
+    color: #642f40;
+
+}
+
+h1, h2 { color: #642f40; }
+
+.factory-logo {
+
+    text-align: center;
+
+    margin: 20px 0;
+
+}
+
+.factory-logo img {
+
+    width: 170px;
+
+    height: 170px;
+
+    object-fit: contain;
+
+}
+
+.print-logo {
+
+    display: none;
+
+    text-align: center;
+
+    margin-bottom: 25px;
+
+}
+
+.print-logo img {
+
+    width: 110px;
+
+    height: 110px;
+
+    object-fit: contain;
+
+}
+
+.edit-btn { background: #a17a42; }
+
+.delete-btn { background: #a83232; }
+
+.report-result {
+
+    background: #f7f0f2;
+
+    border-right: 5px solid #642f40;
+
+    padding: 18px;
+
+    margin-top: 20px;
+
+    border-radius: 8px;
+
+}
+
+.report-result h2 {
+
+    font-size: 28px;
+
+}
+
+.report-result p {
+
+    font-size: 18px;
+
+    margin: 10px 0;
+
+}
+
+.filter-row {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+
+    gap: 12px;
+
+}
+
+.filter-row label {
+
+    display: block;
+
+    color: #642f40;
+
+    font-weight: bold;
+
+}
+
+.table-wrapper {
+
+    overflow-x: auto;
+
+}
+
+@media(max-width:700px) {
+
+    .layout { flex-direction: column; }
+
+    aside { width: 100%; }
+
+    main { padding: 15px; }
+
+    header h2 { font-size: 19px; }
+
+}
+
+@media print {
+
+    body { background: white; }
+
+    header, aside, button,
+
+    .no-print, #loginPage {
+
+        display: none !important;
+
+    }
+
+    #system, main {
+
+        display: block !important;
+
+        padding: 0;
+
+    }
+
+    .section { display: none !important; }
+
+    .section.active { display: block !important; }
+
+    #reports { display: block !important; }
+
+    .print-logo {
+
+        display: block !important;
+
+    }
+
+    .panel, .card {
+
+        box-shadow: none;
+
+    }
+
+    table {
+
+        font-size: 12px;
+
+    }
+
+    th, td {
+
+        border: 1px solid #ddd;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- تسجيل الدخول -->
+
+<div id="loginPage">
+
+    <div class="login-box">
+
+        <h2>أصايل يافا</h2>
+
+        <p>نظام إدارة مصنع الألبان والأجبان</p>
+
+        <input id="username" placeholder="اسم المستخدم">
+
+        <input id="password" type="password" placeholder="كلمة المرور">
+
+        <button onclick="login()">تسجيل الدخول</button>
+
+        <p id="message"></p>
+
+    </div>
+
+</div>
+
+<!-- النظام الرئيسي -->
+
+<div id="system">
+
+<header>
+
+    <h2>مصنع ألبان وأجبان أصايل يافا</h2>
+
+    <button onclick="logout()">تسجيل الخروج</button>
+
+</header>
+
+<div class="layout">
+
+<aside>
+
+    <h3>القائمة الرئيسية</h3>
+
+    <button onclick="showPage('dashboard')">🏠 لوحة التحكم</button>
+
+    <button onclick="showPage('products')">🧀 إدارة المنتجات</button>
+
+    <button onclick="showPage('inventory')">📦 إدارة المخزون</button>
+
+    <button onclick="showPage('production')">🏭 إدارة الإنتاج</button>
+
+    <button onclick="showPage('purchases')">🛒 المشتريات</button>
+
+    <button onclick="showPage('sales')">💰 المبيعات</button>
+
+    <button onclick="showPage('customers')">👥 الزبائن</button>
+
+    <button onclick="showPage('suppliers')">🚚 الموردون</button>
+
+    <button onclick="showPage('employees')">👨‍💼 الموظفون</button>
+
+    <button onclick="showPage('quality')">🔍 مراقبة الجودة</button>
+
+    <button onclick="showPage('reports')">📊 التقارير والاستعلامات</button>
+
+</aside>
+
+<main>
+
+<!-- لوحة التحكم -->
+
+<div id="dashboard" class="section active">
+
+    <h1>لوحة التحكم الرئيسية</h1>
+
+    <p>مرحباً بك في نظام إدارة مصنع أصايل يافا</p>
+
+    <div class="factory-logo">
+
+        <img src="logo.png" alt="شعار مصنع أصايل يافا">
+
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>عدد المنتجات</h3>
+
+            <p id="countProducts">0</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>أصناف المخزون</h3>
+
+            <p id="countInventory">0</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>عمليات الإنتاج</h3>
+
+            <p id="countProduction">0</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>عمليات البيع</h3>
+
+            <p id="countSales">0</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- المنتجات -->
+
+<div id="products" class="section">
+
+    <h1>إدارة المنتجات</h1>
+
+    <div class="panel">
+
+        <input id="pName" placeholder="اسم المنتج">
+
+        <input id="pPrice" type="number" placeholder="سعر البيع">
+
+        <select id="pUnit">
+
+            <option>كيلوغرام</option>
+
+            <option>غرام</option>
+
+            <option>لتر</option>
+
+            <option>قطعة</option>
+
+        </select>
+
+        <button onclick="add('products',['pName','pPrice','pUnit'])">
+
+            إضافة منتج
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="productsTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- المخزون -->
+
+<div id="inventory" class="section">
+
+    <h1>إدارة المخزون</h1>
+
+    <div class="panel">
+
+        <input id="iName" placeholder="اسم المادة">
+
+        <input id="iQty" type="number" placeholder="الكمية">
+
+        <input id="iUnit" placeholder="وحدة القياس">
+
+        <button onclick="add('inventory',['iName','iQty','iUnit'])">
+
+            إضافة للمخزون
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="inventoryTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- الإنتاج -->
+
+<div id="production" class="section">
+
+    <h1>إدارة الإنتاج</h1>
+
+    <div class="panel">
+
+        <input id="prName" placeholder="اسم المنتج">
+
+        <input id="prQty" type="number" placeholder="الكمية المنتجة">
+
+        <input id="prDate" type="date">
+
+        <button onclick="add('production',['prName','prQty','prDate'])">
+
+            حفظ عملية الإنتاج
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="productionTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- المشتريات -->
+
+<div id="purchases" class="section">
+
+    <h1>إدارة المشتريات</h1>
+
+    <div class="panel">
+
+        <input id="puName" placeholder="اسم المادة المشتراة">
+
+        <input id="puQty" type="number" placeholder="الكمية">
+
+        <input id="puCost" type="number" placeholder="التكلفة">
+
+        <input id="puDate" type="date">
+
+        <button onclick="add('purchases',['puName','puQty','puCost','puDate'])">
+
+            إضافة مشتريات
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="purchasesTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- المبيعات -->
+
+<div id="sales" class="section">
+
+    <h1>إدارة المبيعات</h1>
+
+    <div class="panel">
+
+        <input id="sCustomer" placeholder="اسم الزبون">
+
+        <input id="sProduct" placeholder="اسم المنتج">
+
+        <input id="sQty" type="number" placeholder="الكمية">
+
+        <input id="sPrice" type="number" placeholder="إجمالي السعر">
+
+        <input id="sDate" type="date">
+
+        <button onclick="add('sales',['sCustomer','sProduct','sQty','sPrice','sDate'])">
+
+            تسجيل عملية بيع
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="salesTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- الزبائن -->
+
+<div id="customers" class="section">
+
+    <h1>إدارة الزبائن</h1>
+
+    <div class="panel">
+
+        <input id="cName" placeholder="اسم الزبون">
+
+        <input id="cPhone" placeholder="رقم الهاتف">
+
+        <input id="cAddress" placeholder="العنوان">
+
+        <button onclick="add('customers',['cName','cPhone','cAddress'])">
+
+            إضافة زبون
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="customersTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- الموردون -->
+
+<div id="suppliers" class="section">
+
+    <h1>إدارة الموردين</h1>
+
+    <div class="panel">
+
+        <input id="suName" placeholder="اسم المورد">
+
+        <input id="suPhone" placeholder="رقم الهاتف">
+
+        <input id="suMaterial" placeholder="المواد الموردة">
+
+        <button onclick="add('suppliers',['suName','suPhone','suMaterial'])">
+
+            إضافة مورد
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="suppliersTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- الموظفون -->
+
+<div id="employees" class="section">
+
+    <h1>إدارة الموظفين</h1>
+
+    <div class="panel">
+
+        <input id="eName" placeholder="اسم الموظف">
+
+        <input id="eJob" placeholder="المسمى الوظيفي">
+
+        <input id="ePhone" placeholder="رقم الهاتف">
+
+        <button onclick="add('employees',['eName','eJob','ePhone'])">
+
+            إضافة موظف
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="employeesTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- الجودة -->
+
+<div id="quality" class="section">
+
+    <h1>مراقبة الجودة</h1>
+
+    <div class="panel">
+
+        <input id="qProduct" placeholder="اسم المنتج">
+
+        <select id="qStatus">
+
+            <option>مطابق للمواصفات</option>
+
+            <option>غير مطابق</option>
+
+            <option>قيد الفحص</option>
+
+        </select>
+
+        <input id="qDate" type="date">
+
+        <button onclick="add('quality',['qProduct','qStatus','qDate'])">
+
+            حفظ نتيجة الفحص
+
+        </button>
+
+        <div class="table-wrapper">
+
+            <table id="qualityTable"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- التقارير والاستعلامات -->
+
+<div id="reports" class="section">
+
+    <h1>التقارير والاستعلامات</h1>
+
+    <div class="print-logo">
+
+        <img src="logo.png" alt="شعار المصنع">
+
+        <h2>مصنع ألبان وأجبان أصايل يافا</h2>
+
+        <p>تقرير إداري للمصنع</p>
+
+        <hr>
+
+    </div>
+
+    <div class="panel no-print">
+
+        <h3>تحديد فترة التقرير</h3>
+
+        <div class="filter-row">
+
+            <label>
+
+                من تاريخ
+
+                <input type="date" id="reportFrom">
+
+            </label>
+
+            <label>
+
+                إلى تاريخ
+
+                <input type="date" id="reportTo">
+
+            </label>
+
+        </div>
+
+        <h3>اختيار نوع الاستعلام</h3>
+
+        <select id="reportType">
+
+            <option value="all">ملخص شامل</option>
+
+            <option value="production">تقارير الإنتاج</option>
+
+            <option value="sales">تقارير المبيعات</option>
+
+            <option value="purchases">تقارير المشتريات</option>
+
+            <option value="inventory">تقارير المخزون</option>
+
+            <option value="products">تقارير المنتجات</option>
+
+            <option value="customers">تقارير الزبائن</option>
+
+            <option value="suppliers">تقارير الموردين</option>
+
+            <option value="employees">تقارير الموظفين</option>
+
+            <option value="quality">تقارير الجودة</option>
+
+        </select>
+
+        <button onclick="generateReport()">
+
+            تنفيذ الاستعلام
+
+        </button>
+
+        <button onclick="window.print()">
+
+            طباعة التقرير
+
+        </button>
+
+    </div>
+
+    <div id="reportResult" class="panel">
+
+        <h3>نتائج الاستعلامات</h3>
+
+        <p>اختاري الفترة ونوع التقرير ثم اضغطي تنفيذ الاستعلام.</p>
+
+    </div>
+
+</div>
+
+</main>
+
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
+const supabaseUrl = "https://oehxttfsuijjpjjdgfrr.supabase.co";
+const supabaseKey = "sb_publishable_sySCEe_AK686EortzZKdzw_mN9N2mzM";
+const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+// بيانات الدخول التجريبية
+
+const ADMIN_USERNAME = "admin";
+const ADMIN_EMAIL = "karmel.abubaker20@gmail.com";
+// أسماء الأقسام وحقولها
+
+const sections = [
+
+"products",
+
+"inventory",
+
+"production",
+
+"purchases",
+
+"sales",
+
+"customers",
+
+"suppliers",
+
+"employees",
+
+"quality"
+
+];
+
+const headers = {
+
+products: ["اسم المنتج","سعر البيع","الوحدة"],
+
+inventory: ["اسم المادة","الكمية","وحدة القياس"],
+
+production: ["المنتج","الكمية المنتجة","التاريخ"],
+
+purchases: ["المادة","الكمية","التكلفة","التاريخ"],
+
+sales: ["الزبون","المنتج","الكمية","إجمالي السعر","التاريخ"],
+
+customers: ["اسم الزبون","الهاتف","العنوان"],
+
+suppliers: ["اسم المورد","الهاتف","المواد"],
+
+employees: ["اسم الموظف","الوظيفة","الهاتف"],
+
+quality: ["المنتج","حالة الفحص","التاريخ"]
+
+};
+
+// تسجيل الدخول
+async function login() {
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const message = document.getElementById("message");
+    const loginPage = document.getElementById("loginPage");
+    const system = document.getElementById("system");
+
+    const user = username.value.trim().toLowerCase();
+    const pass = password.value.trim();
+
+    if (user !== ADMIN_USERNAME || !pass) {
+        message.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة";
+        return;
+    }
+
+    const { data, error } = await db.auth.signInWithPassword({
+        email: ADMIN_EMAIL,
+        password: pass
+    });
+
+    if (error) {
+        message.textContent = "تعذر تسجيل الدخول: " + error.message;
+        return;
+    }
+
+    loginPage.style.display = "none";
+    system.style.display = "block";
+    message.textContent = "";
+
+     await loadAllData();
+
+
+}
+
+// تسجيل الخروج
+
+function logout() {
+
+    document.getElementById("system").style.display = "none";
+
+    document.getElementById("loginPage").style.display = "flex";
+
+}
+
+// التنقل بين الصفحات
+
+function showPage(page) {
+
+    document.querySelectorAll(".section").forEach(s => {
+
+        s.classList.remove("active");
+
+    });
+
+    document.getElementById(page).classList.add("active");
+
+}
+
+// تخزين البيانات القادمة من Supabase مؤقتاً داخل النظام
+const appData = {};
+const recordIds = {};
+
+// قراءة البيانات
+function getData(name) {
+    return appData[name] || [];
+}
+
+// تحميل البيانات من Supabase
+async function loadAllData() {
+    const { data, error } = await db
+        .from("app_records")
+        .select("id, section, data")
+        .order("id");
+
+    if (error) {
+        alert("تعذر تحميل البيانات: " + error.message);
+        return;
+    }
+
+    sections.forEach(section => {
+        appData[section] = [];
+        recordIds[section] = [];
+    });
+
+    data.forEach(item => {
+        if (!appData[item.section]) {
+            appData[item.section] = [];
+            recordIds[item.section] = [];
+        }
+
+        appData[item.section].push(item.data);
+        recordIds[item.section].push(item.id);
+    });
+
+    sections.forEach(section => displayRecords(section));
+    updateDashboard();
+}
+
+// إضافة سجل جديد
+async function add(section, fields) {
+    let values = fields.map(id =>
+        document.getElementById(id).value.trim()
+    );
+
+    if (values.some(v => v === "")) {
+        alert("يرجى تعبئة جميع الحقول");
+        return;
+    }
+
+    if (values.some((v, i) =>
+        ["pPrice","iQty","prQty","puQty","puCost","sQty","sPrice"]
+        .includes(fields[i]) &&
+        (!Number.isFinite(Number(v)) || Number(v) < 0)
+    )) {
+        alert("يرجى إدخال أرقام صحيحة غير سالبة");
+        return;
+    }
+
+    const { data, error } = await db
+        .from("app_records")
+        .insert({
+            section: section,
+            data: values
+        })
+        .select("id")
+        .single();
+
+    if (error) {
+        alert("لم تتم الإضافة: " + error.message);
+        return;
+    }
+
+    if (!appData[section]) {
+        appData[section] = [];
+        recordIds[section] = [];
+    }
+
+    appData[section].push(values);
+    recordIds[section].push(data.id);
+
+    fields.forEach(id => {
+        document.getElementById(id).value = "";
+    });
+
+    displayRecords(section);
+    updateDashboard();
+    alert("تمت الإضافة بنجاح");
+}
+
+// إنشاء الجداول
+function displayRecords(section) {
+    let records = getData(section);
+    let table = document.getElementById(section + "Table");
+
+    if (!table) return;
+
+    table.innerHTML = "";
+
+    let head = document.createElement("tr");
+
+    headers[section].forEach(name => {
+        let th = document.createElement("th");
+        th.textContent = name;
+        head.appendChild(th);
+    });
+
+    let actionsHeader = document.createElement("th");
+    actionsHeader.textContent = "الإجراءات";
+    head.appendChild(actionsHeader);
+    table.appendChild(head);
+
+    records.forEach((record, index) => {
+        let row = document.createElement("tr");
+
+        headers[section].forEach((name, i) => {
+            let td = document.createElement("td");
+            td.textContent = record[i] ?? "";
+            row.appendChild(td);
+        });
+
+        let actionCell = document.createElement("td");
+
+        let editButton = document.createElement("button");
+        editButton.textContent = "تعديل";
+        editButton.className = "edit-btn";
+        editButton.onclick = () => editRecord(section, index);
+
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "حذف";
+        deleteButton.className = "delete-btn";
+        deleteButton.onclick = () => deleteRecord(section, index);
+
+        actionCell.appendChild(editButton);
+        actionCell.appendChild(deleteButton);
+        row.appendChild(actionCell);
+        table.appendChild(row);
+    });
+}
+
+// تعديل السجل
+async function editRecord(section, index) {
+    let records = getData(section);
+    let record = records[index];
+    let newRecord = [...record];
+
+    for (let i = 0; i < headers[section].length; i++) {
+        let newValue = prompt(
+            "تعديل " + headers[section][i],
+            record[i] ?? ""
+        );
+
+        if (newValue === null) return;
+
+        newValue = newValue.trim();
+
+        if (newValue === "") {
+            alert("لا يمكن ترك الحقل فارغاً");
+            return;
+        }
+
+        newRecord[i] = newValue;
+    }
+
+    if (["products","inventory","production","purchases","sales"].includes(section)) {
+        let numberIndexes = {
+            products: [1],
+            inventory: [1],
+            production: [1],
+            purchases: [1,2],
+            sales: [2,3]
+        };
+
+        for (let i of numberIndexes[section]) {
+            if (!Number.isFinite(Number(newRecord[i])) || Number(newRecord[i]) < 0) {
+                alert("يرجى إدخال رقم صحيح غير سالب");
+                return;
+            }
+        }
+    }
+
+    const id = recordIds[section][index];
+
+    const { error } = await db
+        .from("app_records")
+        .update({ data: newRecord })
+        .eq("id", id);
+
+    if (error) {
+        alert("تعذر تعديل البيانات: " + error.message);
+        return;
+    }
+
+    appData[section][index] = newRecord;
+    displayRecords(section);
+    updateDashboard();
+    alert("تم تعديل البيانات بنجاح");
+}
+
+// حذف السجل
+async function deleteRecord(section, index) {
+    let answer = confirm(
+        "هل أنت متأكدة من حذف هذا السجل؟ لا يمكن التراجع عن الحذف."
+    );
+
+    if (!answer) return;
+
+    const id = recordIds[section][index];
+
+    const { error } = await db
+        .from("app_records")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        alert("تعذر حذف السجل: " + error.message);
+        return;
+    }
+
+    appData[section].splice(index, 1);
+    recordIds[section].splice(index, 1);
+
+    displayRecords(section);
+    updateDashboard();
+    alert("تم حذف السجل بنجاح");
+}
+
+// تحديث لوحة التحكم
+function updateDashboard() {
+    document.getElementById("countProducts").textContent =
+        getData("products").length;
+
+    document.getElementById("countInventory").textContent =
+        getData("inventory").length;
+
+    document.getElementById("countProduction").textContent =
+        getData("production").length;
+
+    document.getElementById("countSales").textContent =
+        getData("sales").length;
+}
+// التأكد من أن التاريخ داخل الفترة المحددة
+
+function inDateRange(date,from,to) {
+
+    if(!date) return false;
+
+    if(from && date < from) return false;
+
+    if(to && date > to) return false;
+
+    return true;
+
+}
+
+// تنسيق الأرقام
+
+function numberFormat(number) {
+
+    return Number(number || 0).toLocaleString("en-US", {
+
+        maximumFractionDigits: 2
+
+    });
+
+}
+
+// إنشاء التقارير والاستعلامات
+
+function generateReport() {
+
+    let from = document.getElementById("reportFrom").value;
+
+    let to = document.getElementById("reportTo").value;
+
+    let type = document.getElementById("reportType").value;
+
+    if(from && to && from > to) {
+
+        alert("تاريخ البداية يجب أن يكون قبل تاريخ النهاية");
+
+        return;
+
+    }
+
+    let result = document.getElementById("reportResult");
+
+    result.innerHTML = "";
+
+    let title = document.createElement("h2");
+
+    title.textContent = "نتائج التقرير";
+
+    result.appendChild(title);
+
+    let period = document.createElement("p");
+
+    period.textContent =
+
+        "الفترة: " + (from || "بداية التسجيل") +
+
+        " إلى " + (to || "اليوم");
+
+    result.appendChild(period);
+
+    function addResult(label,value) {
+
+        let p = document.createElement("p");
+
+        p.textContent = label + ": " + value;
+
+        result.appendChild(p);
+
+    }
+
+    // تقرير الإنتاج
+
+    if(type === "all" || type === "production") {
+
+        let records = getData("production").filter(r =>
+
+            inDateRange(r[2],from,to)
+
+        );
+
+        let total = records.reduce((sum,r) =>
+
+            sum + Number(r[1] || 0),0
+
+        );
+
+        addResult("إجمالي عمليات الإنتاج",records.length);
+
+        addResult("إجمالي الكميات المنتجة",numberFormat(total));
+
+        let products = [...new Set(records.map(r => r[0]))];
+
+        products.forEach(product => {
+
+            let quantity = records
+
+                .filter(r => r[0] === product)
+
+                .reduce((sum,r) => sum + Number(r[1] || 0),0);
+
+            addResult("إنتاج " + product,numberFormat(quantity));
+
+        });
+
+    }
+
+    // تقرير المبيعات
+
+    if(type === "all" || type === "sales") {
+
+        let records = getData("sales").filter(r =>
+
+            inDateRange(r[4],from,to)
+
+        );
+
+        let totalSales = records.reduce((sum,r) =>
+
+            sum + Number(r[3] || 0),0
+
+        );
+
+        let totalQuantity = records.reduce((sum,r) =>
+
+            sum + Number(r[2] || 0),0
+
+        );
+
+        addResult("عدد عمليات البيع",records.length);
+
+        addResult("إجمالي المبيعات المالية",numberFormat(totalSales));
+
+        addResult("إجمالي الكميات المباعة",numberFormat(totalQuantity));
+
+        let products = [...new Set(records.map(r => r[1]))];
+
+        products.forEach(product => {
+
+            let amount = records
+
+                .filter(r => r[1] === product)
+
+                .reduce((sum,r) => sum + Number(r[3] || 0),0);
+
+            let quantity = records
+
+                .filter(r => r[1] === product)
+
+                .reduce((sum,r) => sum + Number(r[2] || 0),0);
+
+            addResult("مبيعات " + product,numberFormat(amount));
+
+            addResult("الكمية المباعة من " + product,numberFormat(quantity));
+
+        });
+
+    }
+
+    // تقرير المشتريات
+
+    if(type === "all" || type === "purchases") {
+
+        let records = getData("purchases").filter(r =>
+
+            inDateRange(r[3],from,to)
+
+        );
+
+        let total = records.reduce((sum,r) =>
+
+            sum + Number(r[2] || 0),0
+
+        );
+
+        let quantity = records.reduce((sum,r) =>
+
+            sum + Number(r[1] || 0),0
+
+        );
+
+        addResult("عدد عمليات الشراء",records.length);
+
+        addResult("إجمالي تكاليف المشتريات",numberFormat(total));
+
+        addResult("إجمالي الكميات المشتراة",numberFormat(quantity));
+
+    }
+
+    // تقرير المخزون
+
+    if(type === "all" || type === "inventory") {
+
+        let records = getData("inventory");
+
+        addResult("عدد أصناف المخزون",records.length);
+
+        let quantity = records.reduce((sum,r) =>
+
+            sum + Number(r[1] || 0),0
+
+        );
+
+        addResult("إجمالي الكميات المسجلة",numberFormat(quantity));
+
+        records.forEach(r => {
+
+            addResult("كمية " + r[0],numberFormat(r[1]) + " " + r[2]);
+
+        });
+
+    }
+
+    // تقرير المنتجات
+
+    if(type === "all" || type === "products") {
+
+        let records = getData("products");
+
+        addResult("عدد المنتجات المسجلة",records.length);
+
+        records.forEach(r => {
+
+            addResult(
+
+                "المنتج: " + r[0],
+
+                numberFormat(r[1]) + " / " + r[2]
+
+            );
+
+        });
+
+    }
+
+    // تقرير الزبائن
+
+    if(type === "all" || type === "customers") {
+
+        let records = getData("customers");
+
+        addResult("إجمالي عدد الزبائن",records.length);
+
+    }
+
+    // تقرير الموردين
+
+    if(type === "all" || type === "suppliers") {
+
+        let records = getData("suppliers");
+
+        addResult("إجمالي عدد الموردين",records.length);
+
+    }
+
+    // تقرير الموظفين
+
+    if(type === "all" || type === "employees") {
+
+        let records = getData("employees");
+
+        addResult("إجمالي عدد الموظفين",records.length);
+
+    }
+
+    // تقرير الجودة
+
+    if(type === "all" || type === "quality") {
+
+        let records = getData("quality").filter(r =>
+
+            inDateRange(r[2],from,to)
+
+        );
+
+        let passed = records.filter(r =>
+
+            r[1] === "مطابق للمواصفات"
+
+        ).length;
+
+        let failed = records.filter(r =>
+
+            r[1] === "غير مطابق"
+
+        ).length;
+
+        let pending = records.filter(r =>
+
+            r[1] === "قيد الفحص"
+
+        ).length;
+
+        addResult("عدد فحوصات الجودة",records.length);
+
+        addResult("الفحوصات المطابقة",passed);
+
+        addResult("الفحوصات غير المطابقة",failed);
+
+        addResult("الفحوصات قيد الانتظار",pending);
+
+    }
+
+    let note = document.createElement("p");
+
+    note.style.marginTop = "25px";
+
+    note.style.color = "#777";
+
+    note.textContent = "تم إنشاء التقرير بناءً على البيانات المسجلة في النظام.";
+
+    result.appendChild(note);
+
+}
+
+ 
+
+console.log("Supabase connected:", !!db);
+</script>
+
+</body>
+
+</html>
